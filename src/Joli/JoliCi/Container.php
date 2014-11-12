@@ -27,12 +27,12 @@ class Container
         $generator->setMustOverwriteIfExists(true);
         $generator->addBuilder($builder);
 
-        return new TravisCiBuildStrategy($builder, $this->getBuildPath($projectPath), $this->getFilesystem($projectPath));
+        return new TravisCiBuildStrategy($builder, $this->getBuildPath($projectPath), $this->getNaming(), $this->getFilesystem($projectPath));
     }
 
     public function getJoliCiStrategy($projectPath)
     {
-        return new JoliCiBuildStrategy($this->getBuildPath($projectPath), $this->getFilesystem($projectPath));
+        return new JoliCiBuildStrategy($this->getBuildPath($projectPath), $this->getNaming(), $this->getFilesystem($projectPath));
     }
 
     public function getConsoleLogger($verbose = false)
@@ -81,5 +81,10 @@ class Container
         $builder->pushStrategy($this->getTravisCiStrategy($projectPath));
 
         return $builder;
+    }
+
+    public function getNaming()
+    {
+        return new Naming();
     }
 }

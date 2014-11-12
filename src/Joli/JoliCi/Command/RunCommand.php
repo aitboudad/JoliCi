@@ -32,7 +32,7 @@ class RunCommand extends Command
     }
 
     /**
-     * Configures the current command.
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -47,6 +47,9 @@ class RunCommand extends Command
         $this->addArgument('cmd', InputArgument::OPTIONAL, "Override test command");
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $container  = new Container();
@@ -56,14 +59,16 @@ class RunCommand extends Command
         $filesystem = $container->getFilesystem($input->getOption('project-path'));
 
         $output->writeln("<info>Creating builds...</info>");
+
         $builds = $builder->createBuilds($input->getOption("project-path"));
+
         $output->writeln(sprintf("<info>%s builds created</info>", count($builds)));
 
         foreach ($builds as $build) {
-            $output->writeln(sprintf("\n<info>Running build %s</info>\n", $build->getName()));
+            $output->writeln(sprintf("\n<info>Running build %s</info>\n", $build->getDescription()));
 
-            if ($executor->runBuild($build->getDirectory(), $build->getDockerName())) {
-                $executor->runTest($build->getDockerName(), $input->getArgument('cmd'));
+            if ($executor->runBuild($build->getDirectory(), $build->getName())) {
+                $executor->runTest($build->getName(), $input->getArgument('cmd'));
             }
 
             $filesystem->remove($build->getDirectory());

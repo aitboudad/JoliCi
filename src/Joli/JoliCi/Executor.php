@@ -115,25 +115,22 @@ class Executor
      */
     public function runTest($dockername, $cmdOverride = array())
     {
-        $logger = $this->logger;
+        $logger           = $this->logger;
+        list($repo, $tag) = explode(':', $dockername);
 
         // Execute test
         $config = array();
-        $image = new Image();
-        $image->setRepository($dockername);
 
         if (is_string($cmdOverride)) {
             $cmdOverride = array('/bin/bash', '-c', $cmdOverride);
         }
 
-        $config['Cmd'] = $cmdOverride;
+        if (!empty($cmdOverride)) {
+            $config['Cmd'] = $cmdOverride;
+        }
 
         $container = new DockerContainer($config);
-        $container->setImage($image);
-
-        // Find better way to pass timeout
-        $currentTimeout = ini_get('default_socket_timeout');
-        ini_set('default_socket_timeout', $this->timeout);
+        $container->setImage(new Image($repo, $tag));
 
         $this->docker->getContainerManager()->run($container, function ($content, $type) use ($logger) {
             if ($type === 2) {
@@ -141,9 +138,7 @@ class Executor
             } else {
                 $logger->addInfo($content);
             }
-        });
-
-        ini_set('default_socket_timeout', $currentTimeout);
+        }, array(), false, $this->timeout);
 
         return $container;
     }

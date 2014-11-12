@@ -3,6 +3,7 @@
 namespace Joli\JoliCi;
 
 use Joli\JoliCi\BuildStrategy\JoliCiBuildStrategy;
+use Joli\JoliCi\Filesystem\Filesystem;
 use org\bovigo\vfs\vfsStream;
 
 class JoliCiBuildStrategyTest extends \PHPUnit_Framework_TestCase
@@ -10,7 +11,7 @@ class JoliCiBuildStrategyTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->buildPath = vfsStream::setup('build-path');
-        $this->strategy = new JoliCiBuildStrategy(vfsStream::url('build-path'));
+        $this->strategy = new JoliCiBuildStrategy(vfsStream::url('build-path'), new Naming(), new Filesystem());
     }
 
     public function testCreateBuilds()
@@ -22,8 +23,6 @@ class JoliCiBuildStrategyTest extends \PHPUnit_Framework_TestCase
         $build = $builds[0];
 
         $this->assertTrue($this->buildPath->hasChild(vfsStream::path($build->getDirectory())));
-        $this->assertContains("test", $build->getDockerName());
-
         $this->assertTrue($this->buildPath->hasChild(vfsStream::path($build->getDirectory())."/Dockerfile"));
         $this->assertTrue($this->buildPath->hasChild(vfsStream::path($build->getDirectory())."/foo"));
         $this->assertTrue($this->buildPath->hasChild(vfsStream::path($build->getDirectory())."/.jolici"));

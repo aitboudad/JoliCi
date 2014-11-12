@@ -18,24 +18,25 @@ class Build
     protected $name;
 
     /**
+     * @var string Description of this build (generally a nice name for end user)
+     */
+    protected $description;
+
+    /**
      * @var string Path of build
      */
     protected $directory;
 
     /**
-     * @var string Name for docker
+     * @param string $name        Name of the build
+     * @param string $directory   Directory where the build
+     * @param string $description Description of this build (generally a nice name for end user)
      */
-    protected $dockername;
-
-    /**
-     * @param $name
-     * @param string $directory
-     */
-    public function __construct($name, $directory)
+    public function __construct($name, $directory, $description = "")
     {
-        $this->name       = $name;
-        $this->directory  = $directory;
-        $this->dockername = sprintf("%s-%s", uniqid('jolici-'), $name);
+        $this->name        = $name;
+        $this->directory   = $directory;
+        $this->description = $description;
     }
 
     /**
@@ -59,12 +60,10 @@ class Build
     }
 
     /**
-     * Return the docker name use for image name
-     *
      * @return string
      */
-    public function getDockerName()
+    public function getDescription()
     {
-        return $this->dockername;
+        return $this->description;
     }
 }

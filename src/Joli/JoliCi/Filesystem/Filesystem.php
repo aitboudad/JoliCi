@@ -1,21 +1,27 @@
 <?php
 /*
  * This file is part of JoliCi.
-*
-* (c) Joel Wurtz <jwurtz@jolicode.com>
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ *
+ * (c) Joel Wurtz <jwurtz@jolicode.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Joli\JoliCi\Filesystem;
 
 use Symfony\Component\Filesystem\Filesystem as BaseFilesystem;
 
+/**
+ * An extended filesystem of the symfony which can make a recursive copy of a directory and also copy link
+ */
 class Filesystem extends BaseFilesystem
 {
     private $excludePaths;
 
+    /**
+     * @param array|string $excludePaths A list of excluded paths
+     */
     public function __construct($excludePaths = array())
     {
         if (is_string($excludePaths)) {
@@ -80,6 +86,7 @@ class Filesystem extends BaseFilesystem
      * Add keeping same permissions as origin file
      *
      * @see \Symfony\Component\Filesystem\Filesystem::copy()
+     *
      * @param string $originFile
      * @param string $targetFile
      * @param Boolean $override
